@@ -6,15 +6,18 @@ export const styles = StyleSheet.create({
     backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding: 10,
   },
   image: {
-    marginTop: 50,
-    width: 270,
-    height: 240,
+    marginTop: 40,
+    width: '95%',
+    height: 300,
     borderRadius: 7,
   },
   results: {
     flex: 1,
+    flexDirection: 'column',
+    gap: 10,
+    justifyContent: 'center',
   },
 })

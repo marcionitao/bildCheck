@@ -11,10 +11,15 @@ import * as ImagePicker from 'expo-image-picker'
 import * as tensorflow from '@tensorflow/tfjs'
 import * as mobilenet from '@tensorflow-models/mobilenet'
 import * as FileSystem from 'expo-file-system'
+import {
+  Classification,
+  ClassificationProps,
+} from './src/components/Classification'
 
 export default function App() {
   const [selectedImageUri, setSelectedImageUri] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [results, setResults] = useState<ClassificationProps[]>([])
 
   const handleSelectImage = async () => {
     setIsLoading(true)
@@ -22,7 +27,7 @@ export default function App() {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3],
+        aspect: [5, 4],
         quality: 1,
       })
       // se usuario não cancelar o upload
@@ -40,6 +45,8 @@ export default function App() {
   }
 
   const imageClassification = async (imageUri: string) => {
+    // limpar o estado
+    setResults([])
     // carregar o tensorflow
     await tensorflow.ready()
     // carregar o modelo de classificacao
@@ -54,7 +61,8 @@ export default function App() {
     const imageTensor = decodeJpeg(raw)
     // classificar a imagem
     const classificationResult = await model.classify(imageTensor)
-    console.log(classificationResult)
+    // setar o resultado na tela e atualizar o estado
+    setResults(classificationResult)
   }
 
   return (
@@ -69,7 +77,11 @@ export default function App() {
         style={styles.image}
         alt="image"
       />
-      <View style={styles.results}></View>
+      <View style={styles.results}>
+        {results.map((result, index) => (
+          <Classification data={result} key={index} />
+        ))}
+      </View>
       {isLoading ? (
         <ActivityIndicator color="#5F1BBF" />
       ) : (
